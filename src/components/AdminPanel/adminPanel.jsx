@@ -13,7 +13,7 @@ const AdminPanel = () => {
     const [loading, setLoading] = useState(false)
 
     const totalAmount = purchasesAll?.reduce((acc, item) => {
-        return acc + item?.price
+        return acc + item?.pricePerNight
     }, 0)
 
     useEffect(() => {
