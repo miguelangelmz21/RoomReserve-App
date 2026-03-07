@@ -5,7 +5,7 @@ import TableGeneral from "../TableGeneral"
 import { Loader2, DollarSign, ShieldAlert } from "lucide-react"
 import Swal from "sweetalert2"
 
-const PanelAdmin = () => {
+const AdminPanel = () => {
 
     const { apiUrl } = useAppStore()
 
@@ -13,7 +13,7 @@ const PanelAdmin = () => {
     const [loading, setLoading] = useState(false)
 
     const totalAmount = purchasesAll?.reduce((acc, item) => {
-        return acc + item?.pricePerNigth
+        return acc + item?.price
     }, 0)
 
     useEffect(() => {
@@ -74,4 +74,4 @@ const PanelAdmin = () => {
     )
 }
 
-export default PanelAdmin
+export default AdminPanel
