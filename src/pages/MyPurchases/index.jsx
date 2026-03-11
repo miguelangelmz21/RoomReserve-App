@@ -2,7 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 import { useAppStore } from "../../store/useAppStore"
-import TableGeneral from "../TableGeneral"
+import TableGeneral from "../../components/TableGeneral"
 import { Loader2 } from "lucide-react"
 
 const MyPurchases = () => {

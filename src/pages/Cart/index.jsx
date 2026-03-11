@@ -1,5 +1,5 @@
 import { Loader2, CreditCard, Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
-import { useAppStore } from "../store/useAppStore"
+import { useAppStore } from "../../store/useAppStore"
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Swal from "sweetalert2";
@@ -24,24 +24,30 @@ const Cart = () => {
                 const jsonReserve = {
                     "userId": user.id,
                     "userEmail": user.email,
-                    "roomId": cart?.[i]?.room?.roomId,
-                    "roomCategory": cart?.[i]?.room?.roomCategory,
-                    "roomImage": cart?.[i]?.room?.roomImage?.[0],
-                    "pricePerNight": cart?.[i]?.room?.pricePerNight,
-                    "bedConfiguration": cart?.[i]?.room?.roomConfiguration,
+                    "roomId": cart?.[i]?.room?.id,
+                    "roomCategory": cart?.[i]?.room?.category,
+                    "roomImage": cart?.[i]?.room?.images?.[0],
                     "roomStatus": cart?.[i]?.room?.status,                    
+                    "totalNights": cart?.[i]?.quantity,
+                    "reservationPrice": cart?.[i]?.room?.pricePerNight*cart?.[i]?.quantity,
+                    "reservationBeds": cart?.[i]?.room?.bedConfiguration+" "+cart?.[i]?.room?.bedType,
                     "date": new Date().toISOString(),
-                }                
-                // const patchRoom = await axios.patch(
-                //     `${apiUrl}/rooms/${cart?.[i]?.room?.roomId}`,
-                //     { roomStatus: "Ocupada" }
-                // )
-                // console.log("patch: ", patchRoom)
+                }
                 const postReserve = await axios.post(`${apiUrl}/reserves`, jsonReserve)
                 console.log("reserve: ", postReserve)
                 if (postReserve?.status !== 201) {
                     break
                 }
+                const jsonRoomStatus = {        
+                    "status": "Ocupada",                    
+                }
+                console.log("🔄 Actualizando estado de habitación:", cart?.[i]?.room?.id)
+                
+                const patchRoomStatus = await axios.patch(`${apiUrl}/rooms/${cart?.[i]?.room?.id}`, jsonRoomStatus)
+                if (patchRoomStatus?.status !== 200) {
+                    break
+                }
+
             }
             clearCart()
             Swal.fire({
@@ -91,40 +97,41 @@ const Cart = () => {
 
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden divide-y divide-slate-100">
                     {cart.map((item) => {
-                        const p = item?.room;
-                        const mainImg = p?.roomImage?.[0]
+                        const r = item?.room;
+                        const mainImg = r?.images?.[0]
 
                         return (
-                            <div key={p.roomId} className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-6">
-                                <img src={mainImg} alt={p.roomCategory} className="w-24 h-24 object-cover rounded-xl border border-slate-100" />
+                            <div key={r.id} className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-6">
+                                <img src={mainImg} alt={r.category} className="w-24 h-24 object-cover rounded-xl border border-slate-100" />
 
                                 <div className="flex grow text-center sm:text-left">
-                                    <h3 className="font-bold text-slate-800 text-lg mb-1">{p.roomCategory}</h3>
-                                    <span className="text-indigo-600 font-black">S/. {p.pricePerNight} <span className="text-slate-400 font-normal text-sm">c/u</span></span>
+                                    <h3 className="font-bold text-slate-800 text-lg mb-1">Habitación {r.category}</h3>
+                                    <span className="text-slate-700 font-black">&nbsp;&nbsp;&nbsp;S/.{r.pricePerNight}</span>
                                 </div>
 
                                 <div className="flex items-center gap-3 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
                                     <button
-                                        onClick={() => updateQuantity(p.roomId, item.quantity - 1)}
+                                        onClick={() => updateQuantity(r.id, item.quantity - 1)}
                                         className="p-1 bg-white rounded-md text-slate-600 hover:bg-slate-200 shadow-sm transition"
                                     >
                                         <Minus size={16} />
                                     </button>
-                                    <span className="w-8 text-center font-bold text-slate-800">{item.quantity}</span>
+                                    <span className="w-6 text-center font-bold text-slate-800">{item.quantity}</span>
                                     <button
-                                        onClick={() => updateQuantity(p.roomId, item.quantity + 1)}
+                                        onClick={() => updateQuantity(r.id, item.quantity + 1)}
                                         className="p-1 bg-white rounded-md text-slate-600 hover:bg-slate-200 shadow-sm transition"
                                     >
                                         <Plus size={16} />
                                     </button>
                                 </div>
+                                <span className="text-slate-400 font-normal text-sm">noche(s)</span>
 
-                                <div className="font-black text-slate-800 text-lg min-w-20 sm:text-right text-center">
-                                    S/. {p.pricePerNight * item.quantity}
+                                <div className="font-black text-indigo-600 text-lg min-w-20 sm:text-right text-center">
+                                    S/. {r.pricePerNight * item.quantity}
                                 </div>
 
                                 <button
-                                    onClick={() => removeFromCart(p.roomId)}
+                                    onClick={() => removeFromCart(r.id)}
                                     className="p-2 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition"
                                     title="Eliminar del carrito"
                                 >

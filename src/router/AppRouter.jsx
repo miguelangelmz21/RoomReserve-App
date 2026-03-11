@@ -1,15 +1,17 @@
-import Home from "../components/Home"
 import { HashRouter, Routes, Route, BrowserRouter, Navigate } from "react-router-dom"
-import Login from "../components/Login"
 import { useAppStore } from "../store/useAppStore"
-import Rooms from "../components/Rooms"
-import Page404 from "../components/Page404"
-import Profile from "../components/Profile"
+import Cart from "../pages/Cart"
+import Login from "../pages/Login"
+import Home from "../pages/Home"
+import Profile from "../pages/Profile"
+import Rooms from "../pages/Rooms"
+import MyPurchases from "../pages/MyPurchases"
+import Unauthorized from "../pages/Unauthorized"
+import PanelAdmin from "../pages/panelAdmin"
+import Page404 from "../pages/Page404"
 import Navbar from "../components/layout/Navbar"
-import AdminPanel from "../components/AdminPanel/adminPanel"
-import Unauthorized from "../components/Unauthorized"
-import Cart from "../components/Cart"
-import MyPurchases from "../components/MyPurchases/page"
+import Footer from "../components/layout/Footer"
+import ContactUs from "../pages/ContactUs"
 
 const AppRouter = () => {
     const { user, hasRole } = useAppStore()
@@ -30,7 +32,12 @@ const AppRouter = () => {
 
                     <Route
                         path="/profile"
-                        element={<Profile />}
+                        element={
+                            user === null ?
+                                <Navigate to="/login" />
+                                :
+                                <Profile />
+                        }
                     />
 
                     <Route
@@ -60,7 +67,7 @@ const AppRouter = () => {
                                 <Navigate to="/login" />
                                 :
                                 hasRole(["admin", "editor", "manager", "finance", "RRHH"]) ?
-                                    <AdminPanel />
+                                    <PanelAdmin />
                                     :
                                     <Unauthorized />
                         }
@@ -77,12 +84,17 @@ const AppRouter = () => {
                     />
 
                     <Route
+                        path="/roomReserve"
+                        element={<ContactUs />}
+                    />
+                    <Route
                         path="*"
                         element={<Page404 />}
                     />
 
                 </Routes>
             </main>
+            <Footer/>
         </BrowserRouter>
     )
 }
