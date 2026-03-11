@@ -60,9 +60,12 @@ export const useAppStore = create(
                 }
                 return currentRole.role === roles
             },
+            updateUser: (newDataUser) => set((state) => ({
+                user: { ...state.user, ...newDataUser }
+            })),
             addToCart: (room) => {
                 set((state) => {
-                    const existingItem = state.cart.find(item => item.room.roomId == room.roomId)
+                    const existingItem = state.cart.find(item => item.room.id == room.roomId)
                     if (existingItem) {                    
                         Swal.fire({
                             title: "Ya tienes esta habitación en el carrito",
@@ -82,7 +85,7 @@ export const useAppStore = create(
                             title: "Agregado al carrito",
                             icon: "success",
                             toast: true,
-                            position: "top-end",
+                            position: "top-center",
                             showConfirmButton: false,
                             timer: 2000,
                             timerProgressBar: true
@@ -95,14 +98,14 @@ export const useAppStore = create(
             },
             updateQuantity: (roomId, newQuantity) => set((state) => ({
                 cart: state.cart.map(item =>
-                    item.room.roomId == roomId ?
+                    item.room.id == roomId ?
                         { ...item, quantity: Math.max(1, newQuantity) }
                         :
                         item
                 )
             })),
             removeFromCart: (roomId) => set((state) => ({
-                cart: state.cart.filter(item => item.room.roomIdId !== roomId)
+                cart: state.cart.filter(item => item.room.id !== roomId)
             })),
             clearCart: () => set(
                 {

@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useAppStore } from "../../store/useAppStore"
 import { useEffect, useState } from "react"
-import TableGeneral from "../TableGeneral"
+import TableGeneral from "../../components/TableGeneral"
 import { Loader2, DollarSign, ShieldAlert } from "lucide-react"
 import Swal from "sweetalert2"
 
@@ -13,7 +13,7 @@ const PanelAdmin = () => {
     const [loading, setLoading] = useState(false)
 
     const totalAmount = purchasesAll?.reduce((acc, item) => {
-        return acc + item?.pricePerNigth
+        return acc + item?.reservationPrice
     }, 0)
 
     useEffect(() => {
@@ -55,7 +55,7 @@ const PanelAdmin = () => {
 
             <div className="flex items-center gap-3 mb-8">
                 <ShieldAlert className="text-rose-500" size={32} />
-                <h1 className="text-3xl font-black text-slate-900">Panel de Control Global</h1>
+                <h1 className="text-3xl font-black text-slate-900">Panel de Control de las habitaciones</h1>
             </div>
 
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 flex items-center gap-4">
