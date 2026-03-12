@@ -10,7 +10,7 @@ const Navbar = () => {
     <>
       <div className="sticky top-0 w-full h-16 bg-[#003b95] flex justify-between items-center px-2 z-50">
         <div className="flex items-center gap-4">
-          <div className="flex justify-center items-center gap-2">
+          <div className="hidden md:flex flex justify-center items-center gap-2">
             <Link to="/" className="flex items-center gap-2">
               <img
                 src={logo}
@@ -20,33 +20,35 @@ const Navbar = () => {
               <h2 className="text-white font-extrabold text-lg">RoomReserve</h2>
             </Link>
           </div>
-          <div>
-            <Link
-              to="/rooms"
-              className="border-indigo-300 border-2 bg-white hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold py-2 px-4 rounded-lg text-xs cursor-pointer"
-            >
-              Habitaciones
-            </Link>
-          </div>
-          <div>
-            <Link
-              to="/reserves"
-              className="border-indigo-300 border-2 bg-white hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold py-2 px-4 rounded-lg text-xs cursor-pointer"
-            >
-              Mis Reservas
-            </Link>
-          </div>
-
-          {hasRole(["admin", "editor", "manager", "finance", "RRHH"]) && (
+          <div className="flex gap-1 md:gap-2">
             <div>
               <Link
-                to="/panel-admin"
-                className="border-2 bg-indigo-700 hover:bg-indigo-100 text-white hover:text-indigo-500 font-bold py-2 px-4 rounded-lg text-xs cursor-pointer"
+                to="/rooms"
+                className="border-indigo-300 border-2 bg-white hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold py-1 md:py-2 px-2 md:px-4 rounded-lg text-xs cursor-pointer"
               >
-                Admin Panel
+                Habitaciones
               </Link>
             </div>
-          )}
+            <div>
+              <Link
+                to="/reserves"
+                className="border-indigo-300 border-2 bg-white hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold py-1 md:py-2 px-2 md:px-4 rounded-lg text-xs cursor-pointer"
+              >
+                Mis Reservas
+              </Link>
+            </div>
+
+            {hasRole(["admin", "editor", "manager", "finance", "RRHH"]) && (
+              <div>
+                <Link
+                  to="/panel-admin"
+                  className="border-2 bg-indigo-700 hover:bg-indigo-100 text-white hover:text-indigo-500 font-bold py-1 md:py-2 px-2 md:px-4 rounded-lg text-xs cursor-pointer"
+                >
+                  Admin Panel
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
         {user !== null ? (
           <div className="mr-2 flex items-center gap-6">
@@ -62,7 +64,7 @@ const Navbar = () => {
               )}
             </Link>
 
-            <div>
+            <div className="hidden md:block">
               <Link to="/profile">
                 <h2 className="text-lg text-white text-right">{user?.name}</h2>
                 <h3 className="text-xs text-gray-300 text-right">{user?.role}</h3>
