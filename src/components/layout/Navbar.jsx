@@ -65,9 +65,8 @@ const Navbar = () => {
             <div>
               <Link to="/profile">
                 <h2 className="text-lg text-white text-right">{user?.name}</h2>
+                <h3 className="text-xs text-gray-300 text-right">{user?.role}</h3>
               </Link>
-
-              <h3 className="text-xs text-gray-300 text-right">{user?.role}</h3>
             </div>
 
             <LogOut
