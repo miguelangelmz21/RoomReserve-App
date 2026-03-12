@@ -52,7 +52,7 @@ const TableGeneral = ({ data, tableType }) => {
                                 <td className="p-4 text-sm text-slate-500">{new Date(item?.date).toLocaleString()}</td>
                                 <td className="p-4 font-black text-indigo-600 text-right">S/. {item?.reservationPrice}</td>
                                 <td className="p-4 font-black text-indigo-600 text-right">{item?.totalNights}&nbsp;&nbsp;noche(s)</td>
-                                <td className="p-4 font-black text-indigo-600 text-right"><button onClick={()=>handledStatusId(item.id)}>Cambiar a disponible</button></td>
+                                <td className="p-4 font-black text-indigo-600 text-right"><button onClick={()=>handledStatusId(item.id)}>CheckIn / CheckOut</button></td>
                             </tr>
                         )
                     })
