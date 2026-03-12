@@ -29,7 +29,7 @@ const Cart = () => {
                     "roomId": cart?.[i]?.room?.id,
                     "roomCategory": cart?.[i]?.room?.category,
                     "roomImage": cart?.[i]?.room?.images?.[0],
-                    "roomStatus": cart?.[i]?.room?.status,                    
+                    "checkOut": "No",                    
                     "totalNights": cart?.[i]?.quantity,
                     "reservationPrice": cart?.[i]?.room?.pricePerNight*cart?.[i]?.quantity,
                     "reservationBeds": cart?.[i]?.room?.bedConfiguration+" "+cart?.[i]?.room?.bedType,

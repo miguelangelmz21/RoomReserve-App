@@ -1,16 +1,49 @@
 import axios from "axios"
 import { useAppStore } from "../store/useAppStore"
+import Swal from "sweetalert2"
 
 
 const TableGeneral = ({ data, tableType }) => {
-    const {apiUrl } = useAppStore()
-    const handledStatusId = async(id)=>{
-
-        const jsonReserve = {        
-                    "status": "Disponible",                    
-                }                
-                const postReserve = await axios.patch(`${apiUrl}/rooms/${id}`, jsonReserve)
-                console.log("reserve: ", postReserve)
+    const { apiUrl, hasRole } = useAppStore()
+    const handledCheckOut = async(item)=>{
+        try {
+            let jsonCheckOut = {}
+            let jsonRoomStatus = {}
+            let endpointCheckOut = ""
+            let endpointRoomStatus = ""
+            
+            if (item?.checkOut === "No") {                
+                jsonCheckOut = { checkOut: "Si" }
+                endpointCheckOut = `${apiUrl}/reserves/${item.id}`            
+                jsonRoomStatus = { status: "Disponible" }
+                endpointRoomStatus = `${apiUrl}/rooms/${item.roomId}`
+            }
+            
+            const response1 = await axios.patch(endpointCheckOut, jsonCheckOut)
+            console.log(response1)
+            const response2 = await axios.patch(endpointRoomStatus, jsonRoomStatus)
+            console.log(response2)
+            
+            
+            Swal.fire({
+                title: 'Check Out registrado; habitación Disponible',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1000,
+                timerProgressBar: true,
+            })
+            
+            setTimeout(() => {
+                window.location.reload()
+            }, 1500)
+        } catch (error) {
+            console.log("Error:", error)
+            Swal.fire({
+                title: 'Error',
+                text: 'No se pudo procesar el Check Out',
+                icon: 'error'
+            })
+        }
     }
     return (
         <table className="w-full border-collapse text-left">
@@ -24,7 +57,7 @@ const TableGeneral = ({ data, tableType }) => {
                     <th className="p-4 font-bold tetx-sm">Fecha de Transacción</th>
                     <th className="p-4 font-bold tetx-sm text-right">Monto Total</th>
                     <th className="p-4 font-bold tetx-sm text-right">Noches Reservadas</th>
-                    <th className="p-4 font-bold tetx-sm text-right">Estado Actual</th>
+                    <th className="p-4 font-bold tetx-sm text-right">Estado</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,7 +85,43 @@ const TableGeneral = ({ data, tableType }) => {
                                 <td className="p-4 text-sm text-slate-500">{new Date(item?.date).toLocaleString()}</td>
                                 <td className="p-4 font-black text-indigo-600 text-right">S/. {item?.reservationPrice}</td>
                                 <td className="p-4 font-black text-indigo-600 text-right">{item?.totalNights}&nbsp;&nbsp;noche(s)</td>
-                                <td className="p-4 font-black text-indigo-600 text-right"><button onClick={()=>handledStatusId(item.id)}>CheckIn / CheckOut</button></td>
+                                <td className="p-4 font-black text-indigo-600 text-right">
+                                    <button 
+                                        onClick={() => {
+                                            if (item?.checkOut === "Si") {
+                                                Swal.fire({
+                                                    title: 'Reserva completada',
+                                                    text: 'Esta reserva ya tiene CheckOut registrado',
+                                                    icon: 'info',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                                return
+                                            }
+                                            if (!hasRole(["admin"])) {
+                                                Swal.fire({
+                                                    title: 'Acceso denegado',
+                                                    text: 'Solo los administradores pueden realizar esta acción',
+                                                    icon: 'warning',
+                                                    showConfirmButton: false,
+                                                    timer: 1500
+                                                })
+                                                return
+                                            }
+                                            handledCheckOut(item)
+                                        }}
+                                        disabled={item?.checkOut === "Si" || !hasRole(["admin"])}
+                                        className={`font-bold px-3 py-1 rounded ${
+                                            item?.checkOut === "Si"
+                                                ? "bg-slate-200 text-red-500 cursor-not-allowed opacity-60"
+                                                : hasRole(["admin"])
+                                                    ? "bg-indigo-600 text-green-400 hover:bg-indigo-700 cursor-pointer" 
+                                                    : "bg-slate-200 text-green-500 cursor-not-allowed opacity-60"
+                                        }`}
+                                    >
+                                        {item?.checkOut !== "No" ? "Check Out" : "Check In"}
+                                    </button>
+                                </td>
                             </tr>
                         )
                     })

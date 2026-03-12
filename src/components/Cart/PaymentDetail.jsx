@@ -1,4 +1,4 @@
-import { Activity, CreditCard } from "lucide-react"
+import { Loader2, CreditCard } from "lucide-react"
 
 const PaymentDetail = ({ cart, totalAmount, handleCheckout, isCheckingOut }) => {
     return (

@@ -30,6 +30,7 @@ const Room = ({ item, handlePopup, handleRoom, addToCart }) => {
         category: item?.category,
         bedConfiguration: item?.bedConfiguration,
         bedType: item?.bedType,
+        status: item?.status,
         pricePerNight: item?.pricePerNight,
         images: item?.images[0],
         maxOccupancy: item?.maxOccupancy,
@@ -48,6 +49,7 @@ const Room = ({ item, handlePopup, handleRoom, addToCart }) => {
             category: data?.category,
             bedConfiguration: data?.bedConfiguration,
             bedType: data?.bedType,
+            status: data?.status,
             pricePerNight: Number(data?.pricePerNight),
             images: [...item.images, data?.image],
             maxOccupancy: data?.maxOccupancy,
@@ -108,10 +110,6 @@ const Room = ({ item, handlePopup, handleRoom, addToCart }) => {
             {item?.bedConfiguration > 1 ? "Camas" : "Cama"} {item?.bedType}
         </p>
         </div>
-        {/* <div className="flex justify-between items-center gap-3 px-3">
-                <button
-                    className="text-white bg-indigo-800 flex gap-2 items-center justify-center px-4 py-2 rounded-md font-sbold w-full hover:bg-blue-700 cursor-pointer"
-                    onClick={() => { */}
         <div className="flex flex-col gap-1 px-3">
             <div
             className={`grid ${hasRole(["admin"]) ? "grid-cols-3" : "grid-cols-2"} items-center gap-1`}
@@ -183,6 +181,31 @@ const Room = ({ item, handlePopup, handleRoom, addToCart }) => {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+
+                    <div>
+                    <label className="block text-sm font-bold text-slate-700 mb-1">
+                        Estado de la Habitación
+                    </label>
+                    <select
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none"
+                        {...register("status", {
+                        required: {
+                            value: true,
+                            message: "El estado es requerido",
+                        },
+                        })}
+                    >
+                        <option value="Disponible">Disponible</option>
+                        <option value="Ocupada">Ocupada</option>
+                        <option value="Limpieza">Limpieza</option>
+                    </select>
+                    {errors.status && (
+                        <span className="text-red-500 text-xs font-bold">
+                        {errors.status.message}
+                        </span>
+                    )}
+                    </div>
+
                     <div>
                     <label className="block text-sm font-bold text-slate-700 mb-1">
                         Categoria de la Habitación
@@ -265,7 +288,6 @@ const Room = ({ item, handlePopup, handleRoom, addToCart }) => {
                         Precio por noche
                     </label>
                     <input
-                        // type="number"
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
                         {...register("pricePerNight", {
                         required: {
