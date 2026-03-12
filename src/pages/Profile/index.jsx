@@ -1,24 +1,79 @@
 import { useAppStore } from "../../store/useAppStore"
+import { useState } from "react"
+import axios from "axios"
+import Swal from "sweetalert2"
+import { useForm } from "react-hook-form"
+import CardUser from "../../components/Profile/CardUser"
+import PopupEditUser from "../../components/Profile/PopupEditUser"
 
 const Profile = () => {
 
-    const { user } = useAppStore()
+    const { user, apiUrl, updateUser } = useAppStore()
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { errors }
+    } = useForm({
+        defaultValues: {
+            name: user?.name,
+            email: user?.email,
+            avatar: user?.avatar
+        }
+    })
+
+    const [isShowPopUp, setIsShowPopUp] = useState(false)
+    const [loading, setLoading] = useState(false)
+
+    const onSubmit = async (data) => {
+
+        console.log("data: ", data)
+
+        try {
+            setLoading(true)
+            const response = await axios.patch(`${apiUrl}/users/${user?.id}`, data)
+            console.log("response: ", response)
+            if (response?.status === 200) {
+                Swal.fire({
+                    title: 'Perfil actualizado',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true
+                })
+                setIsShowPopUp(false)
+                updateUser(response.data)
+            }
+        }
+        catch (error) {
+            console.log("error", error)
+        }
+        finally {
+            setLoading(false)
+        }
+    }
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-5xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
-                Usuario: {user?.name}
-            </h1>
-            <h1 className="text-3xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
-                Correo: {user?.email}
-            </h1>
-            <h1 className="text-3xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
-                Rol: {user?.role}
-            </h1>
-            <h1 className="text-3xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight">
-                <img src={user?.avatar} alt="avatar" className="w-24 h-24 rounded-full" />
-            </h1>
+        <div className="max-w-4xl mx-auto px-4 py-12 relative">
+            <CardUser
+                user={user}
+                setIsShowPopUp={setIsShowPopUp}
+            />
 
+            {
+                isShowPopUp &&
+                <PopupEditUser
+                    {...{
+                        setIsShowPopUp,
+                        handleSubmit,
+                        onSubmit,
+                        register,
+                        errors,
+                        loading
+                    }}
+                />
+            }
 
         </div>
     )
